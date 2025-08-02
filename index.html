@@ -22,39 +22,31 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 10px 24px;
-      background: rgba(255, 255, 255, 0.15);
+      padding: 12px 26px;
+      background: rgba(255, 255, 255, 0.2);
       color: white;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 8px;
+      border: 1px solid white;
+      border-radius: 10px;
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       z-index: 10;
-      letter-spacing: 1px;
     }
     .watermark {
       position: absolute;
-      bottom: 10px;
+      bottom: 12px;
       font-size: 14px;
       color: white;
       z-index: 5;
     }
-    .left {
-      left: 10px;
-    }
-    .right {
-      right: 10px;
-    }
-    a {
-      color: white;
-      text-decoration: none;
-    }
+    .left { left: 12px; }
+    .right { right: 12px; }
+    a { color: white; text-decoration: none; }
   </style>
 </head>
 <body>
 
-<video id="player" autoplay muted playsinline></video>
+<video id="player" autoplay muted playsinline type="video/mp4"></video>
 <div class="watermark left">@автор</div>
 <div class="watermark right"><a href="https://syntx.ai" target="_blank">syntx.ai</a></div>
 <button id="more">SYNTX TV</button>
@@ -70,22 +62,27 @@
   const player = document.getElementById("player");
   const btn = document.getElementById("more");
 
-  function playVideo(i) {
-    player.src = videos[i];
+  function loadAndPlay(i) {
+    const source = document.createElement("source");
+    source.src = videos[i];
+    source.type = "video/mp4";
+
+    player.innerHTML = ""; // Удалить старые источники
+    player.appendChild(source);
     player.load();
-    player.play();
+    player.play().catch(err => console.log("Autoplay error:", err));
   }
 
-  function playNext() {
+  function nextVideo() {
     index = (index + 1) % videos.length;
-    playVideo(index);
+    loadAndPlay(index);
   }
 
-  btn.addEventListener('click', playNext);
-  player.addEventListener('ended', playNext);
+  btn.addEventListener("click", nextVideo);
+  player.addEventListener("ended", nextVideo);
 
-  // Инициализация первого видео
-  playVideo(index);
+  // Первое видео
+  loadAndPlay(index);
 </script>
 
 </body>
