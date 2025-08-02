@@ -1,45 +1,78 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SYNTX TV</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: black;
-      height: 100%;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
       background-color: black;
+      overflow: hidden;
     }
-    #author, #link {
-      position: absolute;
+
+    video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    #nextBtn {
+      position: fixed;
       bottom: 20px;
-      font-size: 18px;
-      color: white;
-      background: rgba(0,0,0,0.5);
-      padding: 4px 10px;
-      border-radius: 8px;
-    }
-    #author {
-      left: 20px;
-    }
-    #link {
-      right: 20px;
-    }
-    #startBtn, #nextBtn {
-      position: absolute;
-      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 22px;
-      padding: 12px 24px;
-      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
       border: 2px solid white;
-      co
+      padding: 10px 20px;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 999;
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+
+    #nextBtn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <video id="player" autoplay muted controls playsinline></video>
+  <button id="nextBtn">SYNTX TV</button>
+
+  <script>
+    let videos = [];
+    let current = 0;
+    const player = document.getElementById('player');
+    const nextBtn = document.getElementById('nextBtn');
+
+    async function loadVideos() {
+      try {
+        const response = await fetch('videos.json');
+        videos = await response.json();
+        if (videos.length === 0) throw new Error('Пустой список');
+        playNext();
+      } catch (e) {
+        console.error('Ошибка загрузки videos.json:', e);
+      }
+    }
+
+    function playNext() {
+      if (videos.length === 0) return;
+      player.src = videos[current];
+      player.play();
+      current = (current + 1) % videos.length;
+    }
+
+    player.addEventListener('ended', playNext);
+    nextBtn.addEventListener('click', playNext);
+
+    loadVideos();
+  </script>
+</body>
+</html>
