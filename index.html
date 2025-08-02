@@ -1,89 +1,101 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SYNTX TV</title>
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      background: black;
+      box-sizing: border-box;
+    }
+    html, body {
       height: 100%;
+      background: black;
       overflow: hidden;
+      font-family: sans-serif;
     }
     video {
       width: 100vw;
       height: 100vh;
       object-fit: cover;
       position: absolute;
+      top: 0;
+      left: 0;
     }
-    #more {
+    #button {
       position: absolute;
-      bottom: 20px;
+      bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 12px 26px;
-      background: rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
-      border: 1px solid white;
-      border-radius: 10px;
+      border: 2px solid white;
+      padding: 15px 30px;
       font-size: 18px;
-      font-weight: bold;
       cursor: pointer;
       z-index: 10;
     }
-    .watermark {
+    #author {
       position: absolute;
-      bottom: 12px;
-      font-size: 14px;
+      bottom: 10px;
+      left: 10px;
       color: white;
-      z-index: 5;
+      font-size: 14px;
+      background-color: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
     }
-    .left { left: 12px; }
-    .right { right: 12px; }
-    a { color: white; text-decoration: none; }
+    #link {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: white;
+      font-size: 14px;
+      background-color: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
+  <video id="player" autoplay muted></video>
+  <div id="author">@syntxfamily</div>
+  <div id="link"><a href="https://syntx.ai" style="color: white; text-decoration: none;">syntx.ai</a></div>
+  <button id="button">SYNTX TV</button>
 
-<video id="player" autoplay muted playsinline type="video/mp4"></video>
-<div class="watermark left">@автор</div>
-<div class="watermark right"><a href="https://syntx.ai" target="_blank">syntx.ai</a></div>
-<button id="more">SYNTX TV</button>
+  <script>
+    const video = document.getElementById("player");
+    const btn = document.getElementById("button");
 
-<script>
-  const videos = [
-    "videos/video1.mp4",
-    "videos/video2.mp4",
-    "videos/video3.mp4"
-  ];
+    let videoList = [];
+    let currentIndex = 0;
 
-  let index = 0;
-  const player = document.getElementById("player");
-  const btn = document.getElementById("more");
+    async function fetchVideos() {
+      try {
+        const res = await fetch("videos.json?cache=" + Date.now());
+        videoList = await res.json();
+      } catch (e) {
+        console.error("Не удалось загрузить видео:", e);
+      }
+    }
 
-  function loadAndPlay(i) {
-    const source = document.createElement("source");
-    source.src = videos[i];
-    source.type = "video/mp4";
+    async function playNextVideo() {
+      if (videoList.length === 0) return;
+      video.src = videoList[currentIndex];
+      video.play();
+      currentIndex = (currentIndex + 1) % videoList.length;
+    }
 
-    player.innerHTML = ""; // Удалить старые источники
-    player.appendChild(source);
-    player.load();
-    player.play().catch(err => console.log("Autoplay error:", err));
-  }
-
-  function nextVideo() {
-    index = (index + 1) % videos.length;
-    loadAndPlay(index);
-  }
-
-  btn.addEventListener("click", nextVideo);
-  player.addEventListener("ended", nextVideo);
-
-  // Первое видео
-  loadAndPlay(index);
-</script>
-
+    btn.addEventListener("click", () => {
+      btn.style.display = "none";
+      fetchVideos().then(() => {
+        playNextVideo();
+        video.onended = playNextVideo;
+        setInterval(fetchVideos, 60000); // обновлять список каждые 60 секунд
+      });
+    });
+  </script>
 </body>
 </html>
