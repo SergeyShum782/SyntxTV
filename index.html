@@ -65,5 +65,28 @@
     "videos/video2.mp4",
     "videos/video3.mp4"
   ];
+
   let index = 0;
-  const player = document.getElementById("p
+  const player = document.getElementById("player");
+  const btn = document.getElementById("more");
+
+  function playVideo(i) {
+    player.src = videos[i];
+    player.load();
+    player.play();
+  }
+
+  function playNext() {
+    index = (index + 1) % videos.length;
+    playVideo(index);
+  }
+
+  btn.addEventListener('click', playNext);
+  player.addEventListener('ended', playNext);
+
+  // Инициализация первого видео
+  playVideo(index);
+</script>
+
+</body>
+</html>
