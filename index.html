@@ -1,20 +1,69 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>SYNTX TV</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
+    }
+    video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      position: absolute;
+    }
+    #more {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      font-size: 14px;
+      color: white;
+      z-index: 5;
+    }
+    .left {
+      left: 10px;
+    }
+    .right {
+      right: 10px;
+    }
+    a {
+      color: white;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-  <div id="video-container">
-    <video id="video-player" autoplay muted playsinline></video>
-    <div id="watermarks">
-      <div class="left">@author</div>
-      <div class="right"><a href="https://syntx.ai" target="_blank">syntx.ai</a></div>
-    </div>
-    <button id="next-btn">Ещё</button>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+
+<video id="player" autoplay muted playsinline></video>
+<div class="watermark left">@автор</div>
+<div class="watermark right"><a href="https://syntx.ai" target="_blank">syntx.ai</a></div>
+<button id="more">SYNTX TV</button>
+
+<script>
+  const videos = [
+    "videos/video1.mp4",
+    "videos/video2.mp4",
+    "videos/video3.mp4"
+  ];
+  let index = 0;
+  const player = document.getElementById("p
